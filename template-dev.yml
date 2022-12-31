@@ -1,139 +1,62 @@
-AWSTemplateFormatVersion: 2010-09-09
-Description: Cloud formation for hosting TeckCapsule Graphics
+AWSTemplateFormatVersion: "2010-09-09"
 
 Parameters:
-  DomainName:
-    Description: Domain name
+  CognitoDomain:
     Type: String
-    Default: tekcapsule.com
-  HostedZoneId:
-    Description: Hosted Zone ID
-    Type: String
-  BucketName:
-    Type: String
-    Default: graphics.tekcapsule.com
+    MinLength: 3
+    MaxLength: 63
 
 Resources:
-  S3Bucket:
-    Type: AWS::S3::Bucket
-    DeletionPolicy: Delete
+  UserPool:
+    Type: AWS::Cognito::UserPool
     Properties:
-      AccessControl: PublicRead
-      BucketName: !Ref BucketName
-      WebsiteConfiguration:
-        ErrorDocument: "error.html"
-        IndexDocument: "index.html"
+      UsernameConfiguration: 
+        CaseSensitive: false
+      AutoVerifiedAttributes:
+        - email
+      UserPoolName: !Sub ${CognitoDomain}-user-pool
+      Schema:
+        - Name: email
+          AttributeDataType: String
+          Mutable: false
+          Required: true
+        - Name: name
+          AttributeDataType: String
+          Mutable: true
+          Required: true
 
-  S3BucketPolicy:
-    Type: AWS::S3::BucketPolicy
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
     Properties:
-      Bucket: !Ref S3Bucket
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: "Allow"
-            Action: "s3:GetObject"
-            Principal: "*"
-            Resource: !Sub "${S3Bucket.Arn}/*"
-  #
-  CertificateManagerCertificate:
-    Type: AWS::CertificateManager::Certificate
-    Properties:
-      # naked domain
-      DomainName: !Ref BucketName
-      # add www to certificate
-      SubjectAlternativeNames:
-        - !Sub "www.${BucketName}"
-      ValidationMethod: DNS
-      DomainValidationOptions:
-        # DNS record for the naked domain
-        - DomainName: !Ref BucketName
-          HostedZoneId: !Ref HostedZoneId
-        # DNS record for the www domain
-        - DomainName: !Sub "www.${BucketName}"
-          HostedZoneId: !Ref HostedZoneId
-  #
-  CloudFrontDistribution:
-    Type: AWS::CloudFront::Distribution
-    Properties:
-      DistributionConfig:
-        Aliases:
-          - !Ref BucketName
-          - !Sub "www.${BucketName}"
-        CustomErrorResponses:
-          - ErrorCachingMinTTL: 60
-            ErrorCode: 404
-            ResponseCode: 404
-            ResponsePagePath: "/error.html"
-        DefaultCacheBehavior:
-          AllowedMethods:
-            - GET
-            - HEAD
-          CachedMethods:
-            - GET
-            - HEAD
-          Compress: true
-          DefaultTTL: 86400
-          ForwardedValues:
-            Cookies:
-              Forward: none
-            QueryString: true
-          MaxTTL: 31536000
-          SmoothStreaming: false
-          TargetOriginId: !Sub "S3-${AWS::StackName}"
-          ViewerProtocolPolicy: "redirect-to-https"
-        DefaultRootObject: "index.html"
-        Enabled: true
-        HttpVersion: http2
-        IPV6Enabled: true
-        Origins:
-          - CustomOriginConfig:
-              HTTPPort: 80
-              HTTPSPort: 443
-              OriginKeepaliveTimeout: 5
-              # keep http-only to avoid 504 errors after stack creation
-              OriginProtocolPolicy: "http-only"
-              OriginReadTimeout: 30
-              OriginSSLProtocols:
-                - TLSv1
-                - TLSv1.1
-                - TLSv1.2
-            #Bucket website endpoint without http://
-            DomainName: !Join
-              - ""
-              - - !Ref S3Bucket
-                - ".s3-website-"
-                - !Ref AWS::Region
-                - ".amazonaws.com"
-            Id: !Sub "S3-${AWS::StackName}"
-        PriceClass: PriceClass_All
-        ViewerCertificate:
-          AcmCertificateArn: !Ref CertificateManagerCertificate
-          MinimumProtocolVersion: TLSv1.1_2016
-          SslSupportMethod: sni-only
+      UserPoolId: !Ref UserPool
+      AllowedOAuthFlowsUserPoolClient: true
+      CallbackURLs:
+        - http://localhost:3000
+      AllowedOAuthFlows:
+        - code
+        - implicit
+      AllowedOAuthScopes:
+        - phone
+        - email
+        - openid
+        - profile
+      SupportedIdentityProviders:
+        - COGNITO
 
-  Route53RecordSetGroup:
-    Type: AWS::Route53::RecordSetGroup
+  UserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
     Properties:
-      # keep the . suffix
-      HostedZoneName: !Sub "${DomainName}."
-      # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-aliastarget.html#cfn-route53-aliastarget-hostedzoneid
-      RecordSets:
-        - Name: !Ref BucketName
-          Type: A
-          AliasTarget:
-            DNSName: !GetAtt CloudFrontDistribution.DomainName
-            EvaluateTargetHealth: false
-            HostedZoneId: Z2FDTNDATAQYW2 # leave hardcoded, don't confuse w/ !Ref HostedZoneId
-        - Name: !Sub 'www.${BucketName}'
-          Type: A
-          AliasTarget:
-            DNSName: !GetAtt CloudFrontDistribution.DomainName
-            EvaluateTargetHealth: false
-            HostedZoneId: Z2FDTNDATAQYW2
+      Domain: !Ref CognitoDomain
+      UserPoolId: !Ref UserPool
+      
+
 Outputs:
-  WebsiteURL:
-    Value: !GetAtt S3Bucket.WebsiteURL
-    Description: URL for website hosted on S3
-  CloudfrontDomainName:
-    Value: !GetAtt CloudFrontDistribution.DomainName
+  CognitoUserPoolID:
+    Value: !Ref UserPool
+    Description: The UserPool ID
+  CognitoAppClientID:
+    Value: !Ref UserPoolClient
+    Description: The app client
+  HostedUIURL:
+    Value: !Sub https://${CognitoDomain}.auth.us-west-2.amazoncognito.com/login?client_id=${UserPoolClient}&response_type=code&scope=email+openid+phone+profile&redirect_uri=http://localhost:3000
+    Description: The hosted UI URL
