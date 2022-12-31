@@ -68,8 +68,6 @@ Resources:
         - profile
       SupportedIdentityProviders:
         - COGNITO
-        - Facebook
-        - Google
 
 Outputs:
   CognitoUserPoolID:
