@@ -31,7 +31,7 @@ Resources:
       EmailConfiguration:
         EmailSendingAccount: DEVELOPER
         SourceArn: !Ref EmailSourceArn
-      MfaConfiguration: OPTIONAL
+      MfaConfiguration: OFF
       Schema:
         - Name: email
           AttributeDataType: String
