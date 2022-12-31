@@ -9,7 +9,7 @@ jobs:
   setupDevConginto:
     name: Setup DEV Cognito Infra
     environment:
-      name: PROD
+      name: DEV
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
