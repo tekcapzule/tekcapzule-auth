@@ -5,16 +5,39 @@ Parameters:
     Type: String
     MinLength: 3
     MaxLength: 63
+  HostedZoneId:
+    Description: Hosted Zone ID
+    Type: String
+  EmailSourceArn:
+    Description: Email Source ARN
+    Type: String
+  CertificateArn:
+    Description: Certificate ARN
+    Type: String
 
 Resources:
   UserPool:
     Type: AWS::Cognito::UserPool
     Properties:
-      UsernameConfiguration: 
-        CaseSensitive: false
+      UserPoolName: !Sub ${CognitoDomain}-user-pool
       AutoVerifiedAttributes:
         - email
-      UserPoolName: !Sub ${CognitoDomain}-user-pool
+      UsernameConfiguration:
+        CaseSensitive: false
+      UsernameAttributes:
+        - email
+      DeviceConfiguration:
+        DeviceOnlyRememberedOnUserPrompt: true
+      AccountRecoverySetting:
+        RecoveryMechanisms:
+          - RecoveryOption:
+              Name: verified_email
+              Priority: 1
+      EmailConfiguration:
+        EmailSendingAccount: DEVELOPER
+        From: mail.tekcapsule.com
+        SourceArn: !Ref EmailSourceArn
+      MfaConfiguration: OPTIONAL
       Schema:
         - Name: email
           AttributeDataType: String
@@ -25,13 +48,23 @@ Resources:
           Mutable: true
           Required: true
 
-  UserPoolClient:
+  UserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      Domain: !Ref CognitoDomain
+      UserPoolId: !Ref UserPool
+      CustomDomainConfig:
+        CertificateArn: !Ref CertificateArn
+
+  WebUserPoolClient:
     Type: AWS::Cognito::UserPoolClient
     Properties:
+      ClientName: TekCapsuleWeb
       UserPoolId: !Ref UserPool
       AllowedOAuthFlowsUserPoolClient: true
       CallbackURLs:
-        - http://localhost:3000
+        - http://localhost:4200
+        - https://www.dev.tekcapsule.com
       AllowedOAuthFlows:
         - code
         - implicit
@@ -42,21 +75,16 @@ Resources:
         - profile
       SupportedIdentityProviders:
         - COGNITO
-
-  UserPoolDomain:
-    Type: AWS::Cognito::UserPoolDomain
-    Properties:
-      Domain: !Ref CognitoDomain
-      UserPoolId: !Ref UserPool
-      
+        - Facebook
+        - Google
 
 Outputs:
   CognitoUserPoolID:
     Value: !Ref UserPool
     Description: The UserPool ID
   CognitoAppClientID:
-    Value: !Ref UserPoolClient
-    Description: The app client
+    Value: !Ref WebUserPoolClient
+    Description: TekCapsule Web Client
   HostedUIURL:
-    Value: !Sub https://${CognitoDomain}.auth.us-west-2.amazoncognito.com/login?client_id=${UserPoolClient}&response_type=code&scope=email+openid+phone+profile&redirect_uri=http://localhost:3000
+    Value: !Sub https://${CognitoDomain}.auth.us-west-2.amazoncognito.com/login?client_id=${UserPoolClient}&response_type=code&scope=email+openid+phone+profile&redirect_uri=https://dev.tekcapsule.com
     Description: The hosted UI URL

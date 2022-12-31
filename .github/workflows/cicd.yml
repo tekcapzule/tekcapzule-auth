@@ -27,7 +27,7 @@ jobs:
           name: tekcapsule-cognito-dev
           template: template.yaml
           no-fail-on-empty-changeset: "1"
-          parameter-overrides: "DomainName=dev.tekcapsule.com"
+          parameter-overrides: "DomainName=dev.tekcapsule.com,HostedZoneId=${{ secrets.AWS_HOSTED_ZONE_ID }}"
   setupProdConginto:
     name: Setup PROD Cognito Infra
     needs: setupDevConginto
@@ -50,4 +50,4 @@ jobs:
           name: tekcapsule-cognito-prod
           template: template.yaml
           no-fail-on-empty-changeset: "1"
-          parameter-overrides: "DomainName=tekcapsule.com"
+          parameter-overrides: "DomainName=tekcapsule.com,HostedZoneId=${{ secrets.AWS_HOSTED_ZONE_ID }}"
