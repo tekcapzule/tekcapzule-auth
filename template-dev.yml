@@ -86,5 +86,5 @@ Outputs:
     Value: !Ref WebUserPoolClient
     Description: TekCapsule Web Client
   HostedUIURL:
-    Value: !Sub https://${CognitoDomain}.auth.us-west-2.amazoncognito.com/login?client_id=${UserPoolClient}&response_type=code&scope=email+openid+phone+profile&redirect_uri=https://dev.tekcapsule.com
+    Value: !Sub https://${CognitoDomain}.auth.us-west-2.amazoncognito.com/login?client_id=${WebUserPoolClient}&response_type=code&scope=email+openid+phone+profile&redirect_uri=https://dev.tekcapsule.com
     Description: The hosted UI URL
