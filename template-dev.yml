@@ -28,11 +28,6 @@ Resources:
         - email
       DeviceConfiguration:
         DeviceOnlyRememberedOnUserPrompt: true
-      AccountRecoverySetting:
-        RecoveryMechanisms:
-          - RecoveryOption:
-              Name: verified_email
-              Priority: 1
       EmailConfiguration:
         EmailSendingAccount: DEVELOPER
         From: mail.tekcapsule.com
