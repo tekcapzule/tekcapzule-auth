@@ -30,7 +30,7 @@ Resources:
         DeviceOnlyRememberedOnUserPrompt: true
       EmailConfiguration:
         EmailSendingAccount: DEVELOPER
-        From: mail.dev.tekcapsule.com
+        From: dev.tekcapsule.com
         SourceArn: !Ref EmailSourceArn
       MfaConfiguration: OPTIONAL
       Schema:
