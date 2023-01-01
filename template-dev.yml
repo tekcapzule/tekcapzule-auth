@@ -16,6 +16,20 @@ Parameters:
     Type: String
 
 Resources:
+
+  CertificateManagerCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Ref CognitoDomain
+      SubjectAlternativeNames:
+        - !Sub "www.${CognitoDomain}"
+      ValidationMethod: DNS
+      DomainValidationOptions:
+        - DomainName: !Ref CognitoDomain
+          HostedZoneId: !Ref HostedZoneId
+        - DomainName: !Sub "www.${CognitoDomain}"
+          HostedZoneId: !Ref HostedZoneId
+
   UserPool:
     Type: AWS::Cognito::UserPool
     Properties:
@@ -44,7 +58,7 @@ Resources:
       Domain: !Ref CognitoDomain
       UserPoolId: !Ref UserPool
       CustomDomainConfig:
-        CertificateArn: !Ref CertificateArn
+        CertificateArn: !Ref CertificateManagerCertificate
 
   WebUserPoolClient:
     Type: AWS::Cognito::UserPoolClient
