@@ -14,6 +14,23 @@ Parameters:
   CertificateArn:
     Description: Certificate ARN
     Type: String
+  UserPoolName:
+    Type: String
+    Default: TekCapsuleUserPool
+    Description: Name of the Amazon Cognito User Pool
+  UserPoolClientName:
+    Type: String
+    Default: TekCapsuleUserPoolClient
+    Description: Name of the Amazon Cognito User Pool Client
+  IdentityPoolName:
+    Type: String
+    Default: TekCapsuleIdentityPool
+    Description: Name of the Amazon Cognito Identity Pool
+  IdentityPoolRoleName:
+    Type: String
+    Default: TekCapsuleIdentityPoolRole
+    Description: Name of the AWS Identity and Access Management IAM role for the identity
+      pool
 
 Resources:
 
@@ -30,63 +47,58 @@ Resources:
         - DomainName: !Sub "www.${CognitoDomain}"
           HostedZoneId: !Ref HostedZoneId
 
-  UserPool:
+  TekCapsuleCognitoUserPool:
     Type: AWS::Cognito::UserPool
     Properties:
-      UserPoolName: !Sub ${CognitoDomain}-user-pool
-      AutoVerifiedAttributes:
-        - email
-      UsernameConfiguration:
-        CaseSensitive: false
+      UserPoolName:
+        Ref: UserPoolName
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
       UsernameAttributes:
         - email
-      DeviceConfiguration:
-        DeviceOnlyRememberedOnUserPrompt: true
       Schema:
-        - Name: email
-          AttributeDataType: String
-          Mutable: false
-          Required: true
-        - Name: name
-          AttributeDataType: String
-          Mutable: true
-          Required: true
+        - AttributeDataType: String
+          Name: email
+          Required: false
 
-  UserPoolDomain:
-    Type: AWS::Cognito::UserPoolDomain
-    Properties:
-      Domain: !Ref CognitoDomain
-      UserPoolId: !Ref UserPool
-      CustomDomainConfig:
-        CertificateArn: !Ref CertificateManagerCertificate
-
-  WebUserPoolClient:
+  TekCapsuleCognitoUserPoolClient:
     Type: AWS::Cognito::UserPoolClient
     Properties:
-      ClientName: TekCapsuleWeb
-      UserPoolId: !Ref UserPool
-      AllowedOAuthFlowsUserPoolClient: true
+      UserPoolId:
+        Ref: TekCapsuleCognitoUserPool
+      ClientName:
+        Ref: UserPoolClientName
+      SupportedIdentityProviders:
+        - COGNITO
+      ExplicitAuthFlows:
+        - ALLOW_USER_PASSWORD_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
       CallbackURLs:
-        - http://localhost:4200
-        - https://www.dev.tekcapsule.com
+        - https://dev.tekcapsule.com/
       AllowedOAuthFlows:
         - code
-        - implicit
       AllowedOAuthScopes:
         - phone
         - email
-        - openid
         - profile
-      SupportedIdentityProviders:
-        - COGNITO
+        - openid
+
+  TekCapsuleUserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      Domain: tekcapsule
+      UserPoolId:
+        Ref: TekCapsuleCognitoUserPool
+
 
 Outputs:
   CognitoUserPoolID:
-    Value: !Ref UserPool
+    Value: !Ref UserPoolName
     Description: The UserPool ID
   CognitoAppClientID:
-    Value: !Ref WebUserPoolClient
+    Value: !Ref UserPoolClientName
     Description: TekCapsule Web Client
   HostedUIURL:
-    Value: !Sub https://${CognitoDomain}.auth.us-west-2.amazoncognito.com/login?client_id=${WebUserPoolClient}&response_type=code&scope=email+openid+phone+profile&redirect_uri=https://dev.tekcapsule.com
+    Value: !Sub https://${CognitoDomain}.auth.us-west-2.amazoncognito.com/login?client_id=${UserPoolClientName}&response_type=code&scope=email+openid+phone+profile&redirect_uri=https://dev.tekcapsule.com
     Description: The hosted UI URL
