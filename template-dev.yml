@@ -87,7 +87,7 @@ Resources:
   TekCapsuleUserPoolDomain:
     Type: AWS::Cognito::UserPoolDomain
     Properties:
-      Domain: tekcapsule
+      Domain: tekcapsuledev
       UserPoolId:
         Ref: TekCapsuleCognitoUserPool
 
