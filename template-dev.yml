@@ -16,11 +16,11 @@ Parameters:
     Type: String
   UserPoolName:
     Type: String
-    Default: TekCapsuleUserPool
+    Default: TekCapsuleCognitoUserPool
     Description: Name of the Amazon Cognito User Pool
   UserPoolClientName:
     Type: String
-    Default: TekCapsuleUserPoolClient
+    Default: TekCapsuleCognitoUserPoolClient
     Description: Name of the Amazon Cognito User Pool Client
   IdentityPoolName:
     Type: String
@@ -60,7 +60,16 @@ Resources:
       Schema:
         - AttributeDataType: String
           Name: email
-          Required: false
+          Required: true
+        - AttributeDataType: String
+          Name: phone_number
+          Required: true
+        - AttributeDataType: String
+          Name: given_name
+          Required: true
+        - AttributeDataType: String
+          Name: family_name
+          Required: true
 
   TekCapsuleCognitoUserPoolClient:
     Type: AWS::Cognito::UserPoolClient
@@ -87,7 +96,7 @@ Resources:
   TekCapsuleUserPoolDomain:
     Type: AWS::Cognito::UserPoolDomain
     Properties:
-      Domain: tekcapsuledev
+      Domain: tekcapsuledev2
       UserPoolId:
         Ref: TekCapsuleCognitoUserPool
 
