@@ -16,19 +16,19 @@ Parameters:
     Type: String
   UserPoolName:
     Type: String
-    Default: TekCapsuleCognitoUserPool
+    Default: TekCapzuleCognitoUserPool
     Description: Name of the Amazon Cognito User Pool
   UserPoolClientName:
     Type: String
-    Default: TekCapsuleCognitoUserPoolClient
+    Default: TekCapzuleCognitoUserPoolClient
     Description: Name of the Amazon Cognito User Pool Client
   IdentityPoolName:
     Type: String
-    Default: TekCapsuleIdentityPool
+    Default: TekCapzuleIdentityPool
     Description: Name of the Amazon Cognito Identity Pool
   IdentityPoolRoleName:
     Type: String
-    Default: TekCapsuleIdentityPoolRole
+    Default: TekCapzuleIdentityPoolRole
     Description: Name of the AWS Identity and Access Management IAM role for the identity
       pool
 
@@ -47,7 +47,7 @@ Resources:
         - DomainName: !Sub "www.${CognitoDomain}"
           HostedZoneId: !Ref HostedZoneId
 
-  TekCapsuleCognitoUserPool:
+  TekCapzuleCognitoUserPool:
     Type: AWS::Cognito::UserPool
     Properties:
       UserPoolName:
@@ -71,11 +71,11 @@ Resources:
           Name: family_name
           Required: true
 
-  TekCapsuleCognitoUserPoolClient:
+  TekCapzuleCognitoUserPoolClient:
     Type: AWS::Cognito::UserPoolClient
     Properties:
       UserPoolId:
-        Ref: TekCapsuleCognitoUserPool
+        Ref: TekCapzuleCognitoUserPool
       ClientName:
         Ref: UserPoolClientName
       SupportedIdentityProviders:
@@ -84,7 +84,7 @@ Resources:
         - ALLOW_USER_PASSWORD_AUTH
         - ALLOW_REFRESH_TOKEN_AUTH
       CallbackURLs:
-        - https://dev.tekcapsule.com/
+        - https://dev.tekcapzule.com/
       AllowedOAuthFlows:
         - code
       AllowedOAuthScopes:
@@ -93,12 +93,12 @@ Resources:
         - profile
         - openid
 
-  TekCapsuleUserPoolDomain:
+  TekCapzuleUserPoolDomain:
     Type: AWS::Cognito::UserPoolDomain
     Properties:
-      Domain: tekcapsuledev2
+      Domain: tekcapzuledev2
       UserPoolId:
-        Ref: TekCapsuleCognitoUserPool
+        Ref: TekCapzuleCognitoUserPool
 
 
 Outputs:
@@ -107,7 +107,7 @@ Outputs:
     Description: The UserPool ID
   CognitoAppClientID:
     Value: !Ref UserPoolClientName
-    Description: TekCapsule Web Client
+    Description: TekCapzule Web Client
   HostedUIURL:
-    Value: !Sub https://${CognitoDomain}.auth.us-west-2.amazoncognito.com/login?client_id=${UserPoolClientName}&response_type=code&scope=email+openid+phone+profile&redirect_uri=https://dev.tekcapsule.com
+    Value: !Sub https://${CognitoDomain}.auth.us-west-2.amazoncognito.com/login?client_id=${UserPoolClientName}&response_type=code&scope=email+openid+phone+profile&redirect_uri=https://dev.tekcapzule.com
     Description: The hosted UI URL

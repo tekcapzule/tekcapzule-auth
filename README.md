@@ -1,21 +1,21 @@
 <!-- PROJECT SHIELDS -->
 <a name="readme-top"></a>
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Main Branch](https://github.com/tekcapsule/tekcapsule-auth/actions/workflows/cicd.yml/badge.svg)](https://github.com/tekcapsule/tekcapsule-auth/actions/workflows/cicd.yml) 
-[![Github all releases](https://img.shields.io/github/downloads/tekcapsule/tekcapsule-auth/total.svg)](https://GitHub.com/tekcapsule/tekcapsule-auth/releases/)
+[![Main Branch](https://github.com/tekcapzule/tekcapzule-auth/actions/workflows/cicd.yml/badge.svg)](https://github.com/tekcapzule/tekcapzule-auth/actions/workflows/cicd.yml) 
+[![Github all releases](https://img.shields.io/github/downloads/tekcapzule/tekcapzule-auth/total.svg)](https://GitHub.com/tekcapzule/tekcapzule-auth/releases/)
 
 
 <!-- PROJECT LOGO -->
 
 <div align="center">
   <img src="https://user-images.githubusercontent.com/9839481/209770761-99fd940f-3c75-407b-a339-9fd2cd2c5b7f.svg">
-  <h3 align="center">TekCapsule Auth</h3>
+  <h3 align="center">TekCapzule Auth</h3>
   <p align="center">
-    Auth Provider for TekCapsule
+    Auth Provider for TekCapzule
     <br />
-    <a href="https://www.tekcapsule.com/">View Demo</a> |
-    <a href="https://github.com/tekcapsule/tekcapsule-auth/issues">Report Bug</a> |
-    <a href="https://github.com/tekcapsule/tekcapsule-auth/issues">Request Feature</a>
+    <a href="https://www.tekcapzule.com/">View Demo</a> |
+    <a href="https://github.com/tekcapzule/tekcapzule-auth/issues">Report Bug</a> |
+    <a href="https://github.com/tekcapzule/tekcapzule-auth/issues">Request Feature</a>
   </p>
 </div>
 <div align="center">
@@ -52,7 +52,7 @@
 
 ## About The Project
 
-This repository contains AWS Cloud Formation temaplate for setting up Cognito Userpool infrastructure for TekCapsule. Cognito hosted UI is used for user login/signup in TekCapsule.
+This repository contains AWS Cloud Formation temaplate for setting up Cognito Userpool infrastructure for TekCapzule. Cognito hosted UI is used for user login/signup in TekCapzule.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -77,7 +77,7 @@ This project requires following softwares:
 Please follow the step by step instructions to install the required softwares and setup the project.
 1. Clone the repo
    ```sh
-   git clone https://github.com/tekcapsule/tekcapsule-auth.git
+   git clone https://github.com/tekcapzule/tekcapzule-auth.git
    ```
    
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -86,7 +86,7 @@ Please follow the step by step instructions to install the required softwares an
 <!-- ROADMAP -->
 ## Roadmap
 
-See the [open issues](https://github.com/tekcapsule/tekcapsule-graphics/issues) for a list of proposed features (and known issues).
+See the [open issues](https://github.com/tekcapzule/tekcapzule-graphics/issues) for a list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -105,7 +105,7 @@ Don't forget to give the project a star! Thanks again!
 5. Open a Pull Request
 
 ## Contributors
-<img src= "https://contrib.rocks/image?repo=tekcapsule/tekcapsule-graphics">
+<img src= "https://contrib.rocks/image?repo=tekcapzule/tekcapzule-graphics">
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

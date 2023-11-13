@@ -24,10 +24,10 @@ jobs:
       - name: deploy cloudformation stack
         uses: aws-actions/aws-cloudformation-github-deploy@v1
         with:
-          name: tekcapsule-cognito-dev-v1
+          name: tekcapzule-cognito-dev-v1
           template: template-dev.yml
           no-fail-on-empty-changeset: "1"
-          parameter-overrides: "CognitoDomain=auth.dev.tekcapsule.com,HostedZoneId=${{ secrets.AWS_HOSTED_ZONE_ID }},EmailSourceArn=${{ secrets.AWS_EMAIL_ARN_DEV }},CertificateArn=${{ secrets.AWS_CERTIFICATE_ARN_DEV }}"
+          parameter-overrides: "CognitoDomain=auth.dev.tekcapzule.com,HostedZoneId=${{ secrets.AWS_HOSTED_ZONE_ID }},EmailSourceArn=${{ secrets.AWS_EMAIL_ARN_DEV }},CertificateArn=${{ secrets.AWS_CERTIFICATE_ARN_DEV }}"
   setupProdConginto:
     name: Setup PROD Cognito Infra
     needs: setupDevConginto
@@ -47,7 +47,7 @@ jobs:
       - name: deploy cloudformation stack
         uses: aws-actions/aws-cloudformation-github-deploy@v1
         with:
-          name: tekcapsule-cognito-prod
+          name: tekcapzule-cognito-prod
           template: template.yaml
           no-fail-on-empty-changeset: "1"
-          parameter-overrides: "CognitoDomain=auth.tekcapsule.com,HostedZoneId=${{ secrets.AWS_HOSTED_ZONE_ID }},EmailSourceArn=${{ secrets.AWS_EMAIL_ARN_PROD }},CertificateArn=${{ secrets.AWS_CERTIFICATE_ARN_PROD }}"
+          parameter-overrides: "CognitoDomain=auth.tekcapzule.com,HostedZoneId=${{ secrets.AWS_HOSTED_ZONE_ID }},EmailSourceArn=${{ secrets.AWS_EMAIL_ARN_PROD }},CertificateArn=${{ secrets.AWS_CERTIFICATE_ARN_PROD }}"
