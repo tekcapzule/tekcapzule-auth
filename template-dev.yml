@@ -62,7 +62,7 @@ Resources:
       UsernameAttributes:
         - email
         - phone_number
-        - preferred_username
+        - given_name
       Schema:
         - AttributeDataType: String
           Name: email
