@@ -60,7 +60,9 @@ Resources:
           RequireNumbers: true
           RequireSymbols: true
       UsernameAttributes:
-        - email,phone_number
+        - email
+        - phone_number
+        - preferred_username
       Schema:
         - AttributeDataType: String
           Name: email
