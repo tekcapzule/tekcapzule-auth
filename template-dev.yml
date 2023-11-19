@@ -55,8 +55,12 @@ Resources:
       Policies:
         PasswordPolicy:
           MinimumLength: 8
+          RequireUppercase: true
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: true
       UsernameAttributes:
-        - email
+        - email,phone_number,preferred_username
       Schema:
         - AttributeDataType: String
           Name: email
@@ -78,19 +82,24 @@ Resources:
         Ref: TekCapzuleCognitoUserPool
       ClientName:
         Ref: UserPoolClientName
+      GenerateSecret: true
       SupportedIdentityProviders:
         - COGNITO
       ExplicitAuthFlows:
-        - ALLOW_USER_PASSWORD_AUTH
+        - ALLOW_ADMIN_USER_PASSWORD_AUTH
+        - ALLOW_CUSTOM_AUTH
         - ALLOW_REFRESH_TOKEN_AUTH
+        - ALLOW_USER_PASSWORD_AUTH
+        - ALLOW_USER_SRP_AUTH
       CallbackURLs:
+        - https://dev.tekcapzule.com/
+      LogoutURLs:
         - https://dev.tekcapzule.com/
       AllowedOAuthFlows:
         - code
       AllowedOAuthScopes:
         - phone
         - email
-        - profile
         - openid
 
   TekCapzuleUserPoolDomain:
