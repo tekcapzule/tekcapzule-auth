@@ -1,0 +1,123 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Parameters:
+  CognitoDomain:
+    Type: String
+    MinLength: 3
+    MaxLength: 63
+  HostedZoneId:
+    Description: Hosted Zone ID
+    Type: String
+  EmailSourceArn:
+    Description: Email Source ARN
+    Type: String
+  CertificateArn:
+    Description: Certificate ARN
+    Type: String
+  UserPoolName:
+    Type: String
+    Default: TekCapzuleCognitoUserPool
+    Description: Name of the Amazon Cognito User Pool
+  UserPoolClientName:
+    Type: String
+    Default: TekCapzuleCognitoUserPoolClient
+    Description: Name of the Amazon Cognito User Pool Client
+  IdentityPoolName:
+    Type: String
+    Default: TekCapzuleIdentityPool
+    Description: Name of the Amazon Cognito Identity Pool
+  IdentityPoolRoleName:
+    Type: String
+    Default: TekCapzuleIdentityPoolRole
+    Description: Name of the AWS Identity and Access Management IAM role for the identity
+      pool
+
+Resources:
+
+  CertificateManagerCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Ref CognitoDomain
+      SubjectAlternativeNames:
+        - !Sub "www.${CognitoDomain}"
+      ValidationMethod: DNS
+      DomainValidationOptions:
+        - DomainName: !Ref CognitoDomain
+          HostedZoneId: !Ref HostedZoneId
+        - DomainName: !Sub "www.${CognitoDomain}"
+          HostedZoneId: !Ref HostedZoneId
+
+  TekCapzuleCognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName:
+        Ref: UserPoolName
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireUppercase: true
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: true
+      UsernameAttributes:
+        - email
+        - phone_number
+      Schema:
+        - AttributeDataType: String
+          Name: email
+          Required: true
+        - AttributeDataType: String
+          Name: phone_number
+          Required: true
+        - AttributeDataType: String
+          Name: given_name
+          Required: true
+        - AttributeDataType: String
+          Name: family_name
+          Required: true
+
+  TekCapzuleCognitoUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId:
+        Ref: TekCapzuleCognitoUserPool
+      ClientName:
+        Ref: UserPoolClientName
+      GenerateSecret: true
+      SupportedIdentityProviders:
+        - COGNITO
+      ExplicitAuthFlows:
+        - ALLOW_ADMIN_USER_PASSWORD_AUTH
+        - ALLOW_CUSTOM_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+        - ALLOW_USER_PASSWORD_AUTH
+        - ALLOW_USER_SRP_AUTH
+      CallbackURLs:
+        - https://dev.tekcapzule.com/
+      LogoutURLs:
+        - https://dev.tekcapzule.com/
+      AllowedOAuthFlows:
+        - code
+      AllowedOAuthScopes:
+        - phone
+        - email
+        - openid
+
+  TekCapzuleUserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      Domain: tekcapzuledev
+      UserPoolId:
+        Ref: TekCapzuleCognitoUserPool
+
+
+Outputs:
+  CognitoUserPoolID:
+    Value: !Ref UserPoolName
+    Description: The UserPool ID
+  CognitoAppClientID:
+    Value: !Ref UserPoolClientName
+    Description: TekCapzule Web Client
+  HostedUIURL:
+    Value: !Sub https://${CognitoDomain}.auth.us-west-2.amazoncognito.com/login?client_id=${UserPoolClientName}&response_type=code&scope=email+openid+phone+profile&redirect_uri=https://dev.tekcapzule.com
+    Description: The hosted UI URL
