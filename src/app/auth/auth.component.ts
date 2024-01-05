@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthenticatorService } from '@aws-amplify/ui-angular';
 import { fetchUserAttributes, signInWithRedirect } from 'aws-amplify/auth';
 import { Hub } from 'aws-amplify/utils';
-import { environment } from '../../environments/environment';
+import amplifyconfig from '../../aws-exports';
 
 export type AwsCognitoUserInfo = {
   email?: string;
@@ -94,29 +94,24 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   private saveUserInfoToLocalStorage(userInfo: AwsCognitoUserInfo) {
     window.localStorage.setItem(
-      `Tekcapzule.CognitoIdentityServiceProvider.${environment.AwsCognitoConfigs.UserPoolClientId}.${userInfo.sub}.LastAuthUserInfo`,
+      `Tekcapzule.CognitoIdentityServiceProvider.${amplifyconfig.aws_user_pools_web_client_id}.${userInfo.sub}.LastAuthUserInfo`,
       JSON.stringify(userInfo)
     );
   }
 
   private deleteUserInfoFromLocalStorage() {
-    const lastAuthUserKey = `CognitoIdentityServiceProvider.${environment.AwsCognitoConfigs.UserPoolClientId}.LastAuthUser`;
+    const lastAuthUserKey = `CognitoIdentityServiceProvider.${amplifyconfig.aws_user_pools_web_client_id}.LastAuthUser`;
     const userSub = window.localStorage.getItem(lastAuthUserKey);
-    const lastAuthUserInfoKey = `Tekcapzule.CognitoIdentityServiceProvider.${environment.AwsCognitoConfigs.UserPoolClientId}.${userSub}.LastAuthUserInfo`;
+    const lastAuthUserInfoKey = `Tekcapzule.CognitoIdentityServiceProvider.${amplifyconfig.aws_user_pools_web_client_id}.${userSub}.LastAuthUserInfo`;
     window.localStorage.removeItem(lastAuthUserInfoKey);
   }
 
-  signInWithGoogle() {
-    // this.authenticator.toFederatedSignIn({ provider: 'Google' });
-    signInWithRedirect({ provider: 'Google' });
-  }
-
   checkIfUserAlreadySignedIn() {
-    const lastAuthUserKey = `CognitoIdentityServiceProvider.${environment.AwsCognitoConfigs.UserPoolClientId}.LastAuthUser`;
+    const lastAuthUserKey = `CognitoIdentityServiceProvider.${amplifyconfig.aws_user_pools_web_client_id}.LastAuthUser`;
     const userSub = window.localStorage.getItem(lastAuthUserKey);
 
     if (userSub) {
-      const lastAuthUserInfoKey = `Tekcapzule.CognitoIdentityServiceProvider.${environment.AwsCognitoConfigs.UserPoolClientId}.${userSub}.LastAuthUserInfo`;
+      const lastAuthUserInfoKey = `Tekcapzule.CognitoIdentityServiceProvider.${amplifyconfig.aws_user_pools_web_client_id}.${userSub}.LastAuthUserInfo`;
       const lastAuthUserInfo = window.localStorage.getItem(lastAuthUserInfoKey);
       this.userInfo = lastAuthUserInfo ? JSON.parse(lastAuthUserInfo) : null;
     }

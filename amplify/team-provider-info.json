@@ -1,0 +1,25 @@
+{
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-tekcapsuleauthamplif-staging-110448-authRole",
+      "UnauthRoleArn": "arn:aws:iam::085821407637:role/amplify-tekcapsuleauthamplif-staging-110448-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::085821407637:role/amplify-tekcapsuleauthamplif-staging-110448-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-tekcapsuleauthamplif-staging-110448-deployment",
+      "UnauthRoleName": "amplify-tekcapsuleauthamplif-staging-110448-unauthRole",
+      "StackName": "amplify-tekcapsuleauthamplif-staging-110448",
+      "StackId": "arn:aws:cloudformation:us-east-1:085821407637:stack/amplify-tekcapsuleauthamplif-staging-110448/3df112e0-abba-11ee-9ab5-128b8a0c946d",
+      "AmplifyAppId": "dzxa5akb2ryl"
+    },
+    "categories": {
+      "auth": {
+        "tekcapsuleauthamplif": {
+          "nativeClientId": "49r7aof6h60dnusqilp8pa2lur",
+          "userPoolId": "us-east-1_LEutr5S8p",
+          "userPoolName": "tekcapzule-auth",
+          "webClientId": "49r7aof6h60dnusqilp8pa2lur"
+        }
+      }
+    }
+  }
+}

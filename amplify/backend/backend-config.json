@@ -1,0 +1,45 @@
+{
+  "auth": {
+    "tekcapsuleauthamplif": {
+      "customAuth": false,
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito",
+      "serviceType": "imported"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_auth_tekcapsuleauthamplif_nativeClientId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "tekcapsuleauthamplif"
+        }
+      ]
+    },
+    "AMPLIFY_auth_tekcapsuleauthamplif_userPoolId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "tekcapsuleauthamplif"
+        }
+      ]
+    },
+    "AMPLIFY_auth_tekcapsuleauthamplif_userPoolName": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "tekcapsuleauthamplif"
+        }
+      ]
+    },
+    "AMPLIFY_auth_tekcapsuleauthamplif_webClientId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "tekcapsuleauthamplif"
+        }
+      ]
+    }
+  }
+}

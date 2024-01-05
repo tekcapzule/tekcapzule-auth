@@ -1,0 +1,30 @@
+{
+  "authSelections": "userPoolOnly",
+  "resourceName": "tekcapsuleauthamplif",
+  "serviceType": "imported",
+  "region": "us-east-1",
+  "usernameAttributes": [
+    "email"
+  ],
+  "authProvidersUserPool": [
+    "Facebook",
+    "Google"
+  ],
+  "requiredAttributes": [
+    "given_name",
+    "family_name",
+    "email"
+  ],
+  "passwordPolicyMinLength": 8,
+  "passwordPolicyCharacters": [
+    "Requires Lowercase",
+    "Requires Uppercase",
+    "Requires Numbers",
+    "Requires Symbols"
+  ],
+  "mfaConfiguration": "OFF",
+  "autoVerifiedAttributes": [
+    "email"
+  ],
+  "mfaTypes": []
+}

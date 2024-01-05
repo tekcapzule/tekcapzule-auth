@@ -5,36 +5,10 @@ import { AmplifyAuthenticatorModule } from '@aws-amplify/ui-angular';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { environment } from '../environments/environment';
 import { AuthComponent } from './auth/auth.component';
+import amplifyconfig from '../aws-exports';
 
-Amplify.configure({
-  Auth: {
-    Cognito: {
-      userPoolId: environment.AwsCognitoConfigs.UserPoolId,
-      userPoolClientId: environment.AwsCognitoConfigs.UserPoolClientId,
-      loginWith: {
-        email: true,
-        oauth: {
-          domain: 'tekcapzule-auth.auth.us-east-1.amazoncognito.com',
-          scopes: ['email', 'profile', 'openid'],
-          redirectSignIn: ['http://localhost:4200'],
-          redirectSignOut: ['http://localhost:4200'],
-          responseType: 'code',
-          providers: ['Facebook', 'Google'],
-        },
-      },
-      userAttributes: {
-        given_name: {
-          required: true,
-        },
-        family_name: {
-          required: true,
-        },
-      },
-    },
-  },
-});
+Amplify.configure(amplifyconfig);
 
 @NgModule({
   declarations: [AppComponent, AuthComponent],
