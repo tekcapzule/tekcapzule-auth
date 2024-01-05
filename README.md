@@ -120,6 +120,8 @@ Distributed under the GNU GENERAL PUBLIC LICENSE. See `LICENSE.txt` for more inf
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+---
+
 # TekcapzuleAuth
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.2.7.
