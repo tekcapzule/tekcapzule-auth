@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthenticatorService } from '@aws-amplify/ui-angular';
 import { fetchUserAttributes, signInWithRedirect } from 'aws-amplify/auth';
 import { Hub } from 'aws-amplify/utils';
@@ -17,7 +17,7 @@ export type AwsCognitoUserInfo = {
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.scss'],
 })
-export class AuthComponent implements OnInit, OnDestroy {
+export class AuthComponent implements OnInit, OnDestroy, AfterViewInit {
   hubListenerCancelToken: any = null;
   userInfo: AwsCognitoUserInfo | null = null;
 
@@ -51,14 +51,12 @@ export class AuthComponent implements OnInit, OnDestroy {
     },
   };
 
-  constructor(private authenticator: AuthenticatorService) {}
+  constructor(public authenticator: AuthenticatorService) {}
 
   ngOnInit(): void {
     this.hubListenerCancelToken = Hub.listen('auth', (data) => {
       this.authEventListener(data);
     });
-
-    this.checkIfUserAlreadySignedIn();
   }
 
   ngOnDestroy(): void {
@@ -67,7 +65,11 @@ export class AuthComponent implements OnInit, OnDestroy {
     }
   }
 
-  public signOutUser() {
+  ngAfterViewInit(): void {
+    this.checkIfUserAlreadySignedIn();
+  }
+
+  signOutUser() {
     this.authenticator.signOut();
     this.deleteUserInfoFromLocalStorage();
   }
@@ -75,6 +77,7 @@ export class AuthComponent implements OnInit, OnDestroy {
   private authEventListener(data: any) {
     switch (data?.payload?.event) {
       case 'signedIn':
+      case 'signInWithRedirect':
         this.handleFetchUserAttributes();
         break;
     }
@@ -93,25 +96,33 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   private saveUserInfoToLocalStorage(userInfo: AwsCognitoUserInfo) {
-    window.localStorage.setItem(
-      `Tekcapzule.CognitoIdentityServiceProvider.${amplifyconfig.aws_user_pools_web_client_id}.${userInfo.sub}.LastAuthUserInfo`,
-      JSON.stringify(userInfo)
-    );
+    const lastAuthUserKey = `CognitoIdentityServiceProvider.${amplifyconfig.aws_user_pools_web_client_id}.LastAuthUser`;
+    const lastAuthUser = window.localStorage.getItem(lastAuthUserKey);
+
+    if (lastAuthUser) {
+      window.localStorage.setItem(
+        `Tekcapzule.CognitoIdentityServiceProvider.${amplifyconfig.aws_user_pools_web_client_id}.${lastAuthUser}.LastAuthUserInfo`,
+        JSON.stringify(userInfo)
+      );
+    }
   }
 
   private deleteUserInfoFromLocalStorage() {
     const lastAuthUserKey = `CognitoIdentityServiceProvider.${amplifyconfig.aws_user_pools_web_client_id}.LastAuthUser`;
-    const userSub = window.localStorage.getItem(lastAuthUserKey);
-    const lastAuthUserInfoKey = `Tekcapzule.CognitoIdentityServiceProvider.${amplifyconfig.aws_user_pools_web_client_id}.${userSub}.LastAuthUserInfo`;
-    window.localStorage.removeItem(lastAuthUserInfoKey);
+    const lastAuthUser = window.localStorage.getItem(lastAuthUserKey);
+
+    if (lastAuthUser) {
+      const lastAuthUserInfoKey = `Tekcapzule.CognitoIdentityServiceProvider.${amplifyconfig.aws_user_pools_web_client_id}.${lastAuthUser}.LastAuthUserInfo`;
+      window.localStorage.removeItem(lastAuthUserInfoKey);
+    }
   }
 
   checkIfUserAlreadySignedIn() {
     const lastAuthUserKey = `CognitoIdentityServiceProvider.${amplifyconfig.aws_user_pools_web_client_id}.LastAuthUser`;
-    const userSub = window.localStorage.getItem(lastAuthUserKey);
+    const lastAuthUser = window.localStorage.getItem(lastAuthUserKey);
 
-    if (userSub) {
-      const lastAuthUserInfoKey = `Tekcapzule.CognitoIdentityServiceProvider.${amplifyconfig.aws_user_pools_web_client_id}.${userSub}.LastAuthUserInfo`;
+    if (lastAuthUser) {
+      const lastAuthUserInfoKey = `Tekcapzule.CognitoIdentityServiceProvider.${amplifyconfig.aws_user_pools_web_client_id}.${lastAuthUser}.LastAuthUserInfo`;
       const lastAuthUserInfo = window.localStorage.getItem(lastAuthUserInfoKey);
       this.userInfo = lastAuthUserInfo ? JSON.parse(lastAuthUserInfo) : null;
     }

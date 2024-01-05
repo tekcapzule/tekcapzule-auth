@@ -12,9 +12,9 @@
     <h1>Welcome {{ user.username }}!!!</h1>
     <button (click)="signOut()">Sign Out</button>
   </ng-template> -->
-  <ng-template amplifySlot="authenticated">
+  <ng-template amplifySlot="authenticated" let-user="user">
     <div style="display: flex; flex-direction: column; align-items: center">
-      <h2>Welcome {{ userInfo?.given_name }}!</h2>
+      <h2>Welcome {{ userInfo ? userInfo.given_name : user.usernname }}!</h2>
       <button
         class="amplify-button amplify-button--primary"
         (click)="signOutUser()"
