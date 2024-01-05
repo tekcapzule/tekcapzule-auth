@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthenticatorService } from '@aws-amplify/ui-angular';
-import { fetchUserAttributes } from 'aws-amplify/auth';
+import { fetchUserAttributes, signInWithRedirect } from 'aws-amplify/auth';
 import { Hub } from 'aws-amplify/utils';
 import { environment } from '../../environments/environment';
 
@@ -57,16 +57,14 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.hubListenerCancelToken = Hub.listen('auth', (data) => {
       this.authEventListener(data);
     });
+
+    this.checkIfUserAlreadySignedIn();
   }
 
   ngOnDestroy(): void {
     if (this.hubListenerCancelToken) {
       this.hubListenerCancelToken();
     }
-  }
-
-  public getUserInfo() {
-    return this.userInfo;
   }
 
   public signOutUser() {
@@ -88,7 +86,7 @@ export class AuthComponent implements OnInit, OnDestroy {
       this.userInfo = {
         ...userAttributes,
       };
-      // this.saveUserInfoToLocalStorage(this.userInfo);
+      this.saveUserInfoToLocalStorage(this.userInfo);
     } catch (error) {
       console.log(error);
     }
@@ -96,13 +94,31 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   private saveUserInfoToLocalStorage(userInfo: AwsCognitoUserInfo) {
     window.localStorage.setItem(
-      `CognitoIdentityServiceProvider.${environment.AwsCognitoConfigs.UserPoolClientId}.${userInfo.sub}.LastAuthUserInfo`,
+      `Tekcapzule.CognitoIdentityServiceProvider.${environment.AwsCognitoConfigs.UserPoolClientId}.${userInfo.sub}.LastAuthUserInfo`,
       JSON.stringify(userInfo)
     );
   }
 
   private deleteUserInfoFromLocalStorage() {
-    const lastAuthUserInfoKey = `CognitoIdentityServiceProvider.${environment.AwsCognitoConfigs.UserPoolClientId}.${this.authenticator.username}.LastAuthUserInfo`;
+    const lastAuthUserKey = `CognitoIdentityServiceProvider.${environment.AwsCognitoConfigs.UserPoolClientId}.LastAuthUser`;
+    const userSub = window.localStorage.getItem(lastAuthUserKey);
+    const lastAuthUserInfoKey = `Tekcapzule.CognitoIdentityServiceProvider.${environment.AwsCognitoConfigs.UserPoolClientId}.${userSub}.LastAuthUserInfo`;
     window.localStorage.removeItem(lastAuthUserInfoKey);
+  }
+
+  signInWithGoogle() {
+    // this.authenticator.toFederatedSignIn({ provider: 'Google' });
+    signInWithRedirect({ provider: 'Google' });
+  }
+
+  checkIfUserAlreadySignedIn() {
+    const lastAuthUserKey = `CognitoIdentityServiceProvider.${environment.AwsCognitoConfigs.UserPoolClientId}.LastAuthUser`;
+    const userSub = window.localStorage.getItem(lastAuthUserKey);
+
+    if (userSub) {
+      const lastAuthUserInfoKey = `Tekcapzule.CognitoIdentityServiceProvider.${environment.AwsCognitoConfigs.UserPoolClientId}.${userSub}.LastAuthUserInfo`;
+      const lastAuthUserInfo = window.localStorage.getItem(lastAuthUserInfoKey);
+      this.userInfo = lastAuthUserInfo ? JSON.parse(lastAuthUserInfo) : null;
+    }
   }
 }

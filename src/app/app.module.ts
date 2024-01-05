@@ -13,7 +13,17 @@ Amplify.configure({
     Cognito: {
       userPoolId: environment.AwsCognitoConfigs.UserPoolId,
       userPoolClientId: environment.AwsCognitoConfigs.UserPoolClientId,
-      identityPoolId: environment.AwsCognitoConfigs.IdentityPoolId,
+      loginWith: {
+        email: true,
+        oauth: {
+          domain: 'tekcapzule-auth.auth.us-east-1.amazoncognito.com',
+          scopes: ['email', 'profile', 'openid'],
+          redirectSignIn: ['http://localhost:4200'],
+          redirectSignOut: ['http://localhost:4200'],
+          responseType: 'code',
+          providers: ['Facebook', 'Google'],
+        },
+      },
       userAttributes: {
         given_name: {
           required: true,
