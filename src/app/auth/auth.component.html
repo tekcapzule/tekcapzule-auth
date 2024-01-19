@@ -1,26 +1,90 @@
-<amplify-authenticator
-  initialState="signIn"
-  [formFields]="formFields"
-  [loginMechanisms]="['email']"
-  [socialProviders]="['facebook', 'google']"
->
-  <!-- <ng-template
-    amplifySlot="authenticated"
-    let-user="user"
-    let-signOut="signOut"
+<div style="height: 100%">
+  <amplify-authenticator
+    initialState="signIn"
+    [formFields]="formFields"
+    [loginMechanisms]="['email']"
+    [socialProviders]="['facebook', 'google']"
   >
-    <h1>Welcome {{ user.username }}!!!</h1>
-    <button (click)="signOut()">Sign Out</button>
-  </ng-template> -->
-  <ng-template amplifySlot="authenticated" let-user="user">
-    <div style="display: flex; flex-direction: column; align-items: center">
-      <h2>Welcome {{ userInfo ? userInfo.given_name : user.usernname }}!</h2>
-      <button
-        class="amplify-button amplify-button--primary"
-        (click)="signOutUser()"
+    <ng-template amplifySlot="sign-in-header">
+      <div
+        class="amplify-flex federated-sign-in-container"
+        style="padding-bottom: 0"
       >
-        Sign Out
-      </button>
-    </div>
-  </ng-template>
-</amplify-authenticator>
+        <button
+          type="button"
+          fullwidth="true"
+          fontweight="normal"
+          class="amplify-field-group__control federated-sign-in-button amplify-button amplify-button--default amplify-button--medium"
+          ng-reflect-full-width="true"
+          ng-reflect-font-weight="normal"
+          data-fullwidth="true"
+          data-size="medium"
+          data-variation="default"
+          style="font-weight: normal; margin: 0 30px 0 30px"
+          (click)="redirectToOktaSSO()"
+        >
+          <div class="amplify-flex federated-sign-in-button-row">
+            <p class="amplify-text" style="align-self: center">
+              Sign In with Okta SSO
+            </p>
+          </div>
+        </button>
+        <hr
+          aria-orientation="horizontal"
+          data-size="small"
+          class="amplify-divider amplify-divider--label amplify-divider--small"
+          data-label="or"
+          style="margin: 0 30px"
+        />
+      </div>
+    </ng-template>
+    <ng-template amplifySlot="sign-up-header">
+      <div
+        class="amplify-flex federated-sign-in-container"
+        style="padding-bottom: 0"
+      >
+        <button
+          type="button"
+          fullwidth="true"
+          fontweight="normal"
+          class="amplify-field-group__control federated-sign-in-button amplify-button amplify-button--default amplify-button--medium"
+          ng-reflect-full-width="true"
+          ng-reflect-font-weight="normal"
+          data-fullwidth="true"
+          data-size="medium"
+          data-variation="default"
+          style="font-weight: normal; margin: 0 30px 0 30px"
+          (click)="redirectToOktaSSO()"
+        >
+          <div class="amplify-flex federated-sign-in-button-row">
+            <p class="amplify-text" style="align-self: center">
+              Sign Up with Okta SSO
+            </p>
+          </div>
+        </button>
+        <hr
+          aria-orientation="horizontal"
+          data-size="small"
+          class="amplify-divider amplify-divider--label amplify-divider--small"
+          data-label="or"
+          style="margin: 0 30px"
+        />
+      </div>
+    </ng-template>
+    <ng-template
+      amplifySlot="authenticated"
+      let-user="user"
+      let-signOut="signOut"
+    >
+      <div style="display: flex; flex-direction: column; align-items: center">
+        <h2>Welcome {{ userInfo ? userInfo.given_name : user.usernname }}!</h2>
+        <button
+          class="amplify-button amplify-button--primary"
+          (click)="signOutUser()"
+        >
+          Sign Out
+        </button>
+      </div>
+    </ng-template>
+  </amplify-authenticator>
+</div>

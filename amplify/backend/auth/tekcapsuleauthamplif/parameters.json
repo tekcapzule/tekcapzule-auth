@@ -3,18 +3,9 @@
   "resourceName": "tekcapsuleauthamplif",
   "serviceType": "imported",
   "region": "us-east-1",
-  "usernameAttributes": [
-    "email"
-  ],
-  "authProvidersUserPool": [
-    "Facebook",
-    "Google"
-  ],
-  "requiredAttributes": [
-    "given_name",
-    "family_name",
-    "email"
-  ],
+  "usernameAttributes": ["email"],
+  "authProvidersUserPool": ["Facebook", "Google", "Okta"],
+  "requiredAttributes": ["given_name", "family_name", "email"],
   "passwordPolicyMinLength": 8,
   "passwordPolicyCharacters": [
     "Requires Lowercase",
@@ -23,8 +14,6 @@
     "Requires Symbols"
   ],
   "mfaConfiguration": "OFF",
-  "autoVerifiedAttributes": [
-    "email"
-  ],
+  "autoVerifiedAttributes": ["email"],
   "mfaTypes": []
 }

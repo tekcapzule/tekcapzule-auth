@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthenticatorService } from '@aws-amplify/ui-angular';
-import { fetchUserAttributes, signInWithRedirect } from 'aws-amplify/auth';
+import { fetchUserAttributes } from 'aws-amplify/auth';
 import { Hub } from 'aws-amplify/utils';
-import amplifyconfig from '../../aws-exports';
+import awsconfigs from '../../aws-exports';
 
 export type AwsCognitoUserInfo = {
   email?: string;
@@ -96,35 +96,56 @@ export class AuthComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private saveUserInfoToLocalStorage(userInfo: AwsCognitoUserInfo) {
-    const lastAuthUserKey = `CognitoIdentityServiceProvider.${amplifyconfig.aws_user_pools_web_client_id}.LastAuthUser`;
+    const lastAuthUserKey = `CognitoIdentityServiceProvider.${awsconfigs.aws_user_pools_web_client_id}.LastAuthUser`;
     const lastAuthUser = window.localStorage.getItem(lastAuthUserKey);
 
     if (lastAuthUser) {
       window.localStorage.setItem(
-        `Tekcapzule.CognitoIdentityServiceProvider.${amplifyconfig.aws_user_pools_web_client_id}.${lastAuthUser}.LastAuthUserInfo`,
+        `Tekcapzule.CognitoIdentityServiceProvider.${awsconfigs.aws_user_pools_web_client_id}.${lastAuthUser}.LastAuthUserInfo`,
         JSON.stringify(userInfo)
       );
     }
   }
 
   private deleteUserInfoFromLocalStorage() {
-    const lastAuthUserKey = `CognitoIdentityServiceProvider.${amplifyconfig.aws_user_pools_web_client_id}.LastAuthUser`;
+    const lastAuthUserKey = `CognitoIdentityServiceProvider.${awsconfigs.aws_user_pools_web_client_id}.LastAuthUser`;
     const lastAuthUser = window.localStorage.getItem(lastAuthUserKey);
 
     if (lastAuthUser) {
-      const lastAuthUserInfoKey = `Tekcapzule.CognitoIdentityServiceProvider.${amplifyconfig.aws_user_pools_web_client_id}.${lastAuthUser}.LastAuthUserInfo`;
+      const lastAuthUserInfoKey = `Tekcapzule.CognitoIdentityServiceProvider.${awsconfigs.aws_user_pools_web_client_id}.${lastAuthUser}.LastAuthUserInfo`;
       window.localStorage.removeItem(lastAuthUserInfoKey);
     }
   }
 
   checkIfUserAlreadySignedIn() {
-    const lastAuthUserKey = `CognitoIdentityServiceProvider.${amplifyconfig.aws_user_pools_web_client_id}.LastAuthUser`;
+    const lastAuthUserKey = `CognitoIdentityServiceProvider.${awsconfigs.aws_user_pools_web_client_id}.LastAuthUser`;
     const lastAuthUser = window.localStorage.getItem(lastAuthUserKey);
 
     if (lastAuthUser) {
-      const lastAuthUserInfoKey = `Tekcapzule.CognitoIdentityServiceProvider.${amplifyconfig.aws_user_pools_web_client_id}.${lastAuthUser}.LastAuthUserInfo`;
+      const lastAuthUserInfoKey = `Tekcapzule.CognitoIdentityServiceProvider.${awsconfigs.aws_user_pools_web_client_id}.${lastAuthUser}.LastAuthUserInfo`;
       const lastAuthUserInfo = window.localStorage.getItem(lastAuthUserInfoKey);
       this.userInfo = lastAuthUserInfo ? JSON.parse(lastAuthUserInfo) : null;
     }
+  }
+
+  redirectToOktaSSO() {
+    const oktaUrl = new URL(
+      `https://${awsconfigs.oauth.domain}/oauth2/authorize`
+    );
+    oktaUrl.searchParams.append('identity_provider', 'Okta');
+    oktaUrl.searchParams.append(
+      'redirect_uri',
+      awsconfigs.oauth.redirectSignIn
+    );
+    oktaUrl.searchParams.append('response_type', 'CODE');
+    oktaUrl.searchParams.append(
+      'client_id',
+      awsconfigs.aws_user_pools_web_client_id
+    );
+    oktaUrl.searchParams.append(
+      'scope',
+      'aws.cognito.signin.user.admin email openid profile'
+    );
+    window.location.assign(oktaUrl);
   }
 }

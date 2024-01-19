@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { Amplify } from 'aws-amplify';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AmplifyAuthenticatorModule } from '@aws-amplify/ui-angular';
+import { Amplify } from 'aws-amplify';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -12,7 +13,12 @@ Amplify.configure(amplifyconfig);
 
 @NgModule({
   declarations: [AppComponent, AuthComponent],
-  imports: [BrowserModule, AmplifyAuthenticatorModule, AppRoutingModule],
+  imports: [
+    BrowserModule,
+    AmplifyAuthenticatorModule,
+    BrowserAnimationsModule,
+    AppRoutingModule,
+  ],
   providers: [],
   bootstrap: [AppComponent],
 })
