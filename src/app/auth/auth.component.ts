@@ -1,8 +1,15 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { AuthenticatorService } from '@aws-amplify/ui-angular';
 import { fetchUserAttributes } from 'aws-amplify/auth';
 import { Hub } from 'aws-amplify/utils';
-import awsconfigs from '../../aws-exports';
+import awsExports from '../../aws-exports';
+import { IdentityProvider } from '../models/idp.model';
 
 export type AwsCognitoUserInfo = {
   email?: string;
@@ -51,7 +58,10 @@ export class AuthComponent implements OnInit, OnDestroy, AfterViewInit {
     },
   };
 
-  constructor(public authenticator: AuthenticatorService) {}
+  constructor(
+    public authenticator: AuthenticatorService,
+    private changeDetectorRef: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.hubListenerCancelToken = Hub.listen('auth', (data) => {
@@ -77,7 +87,7 @@ export class AuthComponent implements OnInit, OnDestroy, AfterViewInit {
   private authEventListener(data: any) {
     switch (data?.payload?.event) {
       case 'signedIn':
-      case 'signInWithRedirect':
+        // case 'signInWithRedirect':
         this.handleFetchUserAttributes();
         break;
     }
@@ -89,6 +99,7 @@ export class AuthComponent implements OnInit, OnDestroy, AfterViewInit {
       this.userInfo = {
         ...userAttributes,
       };
+      this.changeDetectorRef.detectChanges();
       this.saveUserInfoToLocalStorage(this.userInfo);
     } catch (error) {
       console.log(error);
@@ -96,33 +107,33 @@ export class AuthComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private saveUserInfoToLocalStorage(userInfo: AwsCognitoUserInfo) {
-    const lastAuthUserKey = `CognitoIdentityServiceProvider.${awsconfigs.aws_user_pools_web_client_id}.LastAuthUser`;
+    const lastAuthUserKey = `CognitoIdentityServiceProvider.${awsExports.aws_user_pools_web_client_id}.LastAuthUser`;
     const lastAuthUser = window.localStorage.getItem(lastAuthUserKey);
 
     if (lastAuthUser) {
       window.localStorage.setItem(
-        `Tekcapzule.CognitoIdentityServiceProvider.${awsconfigs.aws_user_pools_web_client_id}.${lastAuthUser}.LastAuthUserInfo`,
+        `Tekcapzule.CognitoIdentityServiceProvider.${awsExports.aws_user_pools_web_client_id}.${lastAuthUser}.LastAuthUserInfo`,
         JSON.stringify(userInfo)
       );
     }
   }
 
   private deleteUserInfoFromLocalStorage() {
-    const lastAuthUserKey = `CognitoIdentityServiceProvider.${awsconfigs.aws_user_pools_web_client_id}.LastAuthUser`;
+    const lastAuthUserKey = `CognitoIdentityServiceProvider.${awsExports.aws_user_pools_web_client_id}.LastAuthUser`;
     const lastAuthUser = window.localStorage.getItem(lastAuthUserKey);
 
     if (lastAuthUser) {
-      const lastAuthUserInfoKey = `Tekcapzule.CognitoIdentityServiceProvider.${awsconfigs.aws_user_pools_web_client_id}.${lastAuthUser}.LastAuthUserInfo`;
+      const lastAuthUserInfoKey = `Tekcapzule.CognitoIdentityServiceProvider.${awsExports.aws_user_pools_web_client_id}.${lastAuthUser}.LastAuthUserInfo`;
       window.localStorage.removeItem(lastAuthUserInfoKey);
     }
   }
 
   checkIfUserAlreadySignedIn() {
-    const lastAuthUserKey = `CognitoIdentityServiceProvider.${awsconfigs.aws_user_pools_web_client_id}.LastAuthUser`;
+    const lastAuthUserKey = `CognitoIdentityServiceProvider.${awsExports.aws_user_pools_web_client_id}.LastAuthUser`;
     const lastAuthUser = window.localStorage.getItem(lastAuthUserKey);
 
     if (lastAuthUser) {
-      const lastAuthUserInfoKey = `Tekcapzule.CognitoIdentityServiceProvider.${awsconfigs.aws_user_pools_web_client_id}.${lastAuthUser}.LastAuthUserInfo`;
+      const lastAuthUserInfoKey = `Tekcapzule.CognitoIdentityServiceProvider.${awsExports.aws_user_pools_web_client_id}.${lastAuthUser}.LastAuthUserInfo`;
       const lastAuthUserInfo = window.localStorage.getItem(lastAuthUserInfoKey);
       this.userInfo = lastAuthUserInfo ? JSON.parse(lastAuthUserInfo) : null;
     }
@@ -130,21 +141,25 @@ export class AuthComponent implements OnInit, OnDestroy, AfterViewInit {
 
   redirectToOktaSSO() {
     const oktaUrl = new URL(
-      `https://${awsconfigs.oauth.domain}/oauth2/authorize`
+      `https://${awsExports.oauth.domain}/oauth2/authorize`
     );
     oktaUrl.searchParams.append('identity_provider', 'Okta');
     oktaUrl.searchParams.append(
       'redirect_uri',
-      awsconfigs.oauth.redirectSignIn
+      awsExports.oauth.redirectSignIn
     );
     oktaUrl.searchParams.append('response_type', 'CODE');
     oktaUrl.searchParams.append(
       'client_id',
-      awsconfigs.aws_user_pools_web_client_id
+      awsExports.aws_user_pools_web_client_id
     );
     oktaUrl.searchParams.append(
       'scope',
       'aws.cognito.signin.user.admin email openid profile'
+    );
+    oktaUrl.searchParams.append(
+      'state',
+      btoa(`identity_provider=${IdentityProvider.Okta}`)
     );
     window.location.assign(oktaUrl);
   }
