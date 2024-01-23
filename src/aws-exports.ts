@@ -9,8 +9,8 @@ const awsmobile = {
   oauth: {
     domain: 'tekcapzule-auth.auth.us-east-1.amazoncognito.com',
     scope: ['aws.cognito.signin.user.admin', 'email', 'openid', 'profile'],
-    redirectSignIn: 'http://localhost:4200',
-    redirectSignOut: 'http://localhost:4200',
+    redirectSignIn: 'http://localhost:4200/callback',
+    redirectSignOut: 'http://localhost:4200/signout',
     responseType: 'code',
   },
   federationTarget: 'COGNITO_USER_POOLS',
