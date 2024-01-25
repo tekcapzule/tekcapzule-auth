@@ -3,4 +3,5 @@ export enum IdentityProvider {
   Google = 'Google',
   Facebook = 'Facebook',
   Okta = 'Okta',
+  None = 'None',
 }

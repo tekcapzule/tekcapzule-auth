@@ -6,8 +6,8 @@
   "oauth": {
     "domain": "tekcapzule-auth.auth.us-east-1.amazoncognito.com",
     "scope": ["aws.cognito.signin.user.admin", "email", "openid", "profile"],
-    "redirectSignIn": "http://localhost:4200/callback",
-    "redirectSignOut": "http://localhost:4200/signout",
+    "redirectSignIn": "http://localhost:4200/home",
+    "redirectSignOut": "http://localhost:4200/auth",
     "responseType": "code"
   },
   "federationTarget": "COGNITO_USER_POOLS",

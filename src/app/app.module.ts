@@ -9,16 +9,19 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthComponent } from './auth/auth.component';
 import { HomeComponent } from './home/home.component';
-import { CallbackComponent } from './callback/callback.component';
+import { HttpClientModule } from '@angular/common/http';
+import { RouterModule } from '@angular/router';
 
 Amplify.configure(awsExports);
 
 @NgModule({
-  declarations: [AppComponent, AuthComponent, HomeComponent, CallbackComponent],
+  declarations: [AppComponent, AuthComponent, HomeComponent],
   imports: [
     BrowserModule,
     AmplifyAuthenticatorModule,
     BrowserAnimationsModule,
+    RouterModule,
+    HttpClientModule,
     AppRoutingModule,
   ],
   providers: [],

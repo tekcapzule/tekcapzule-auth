@@ -71,20 +71,20 @@
         />
       </div>
     </ng-template>
-    <ng-template
+    <!-- <ng-template
       amplifySlot="authenticated"
       let-user="user"
       let-signOut="signOut"
     >
       <div style="display: flex; flex-direction: column; align-items: center">
-        <h2>Welcome {{ userInfo ? userInfo.given_name : user.usernname }}!</h2>
+        <h2>Welcome {{ user.usernname }}!</h2>
         <button
           class="amplify-button amplify-button--primary"
-          (click)="signOutUser()"
+          (click)="signOut()"
         >
           Sign Out
         </button>
       </div>
-    </ng-template>
+    </ng-template> -->
   </amplify-authenticator>
 </div>
