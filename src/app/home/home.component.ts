@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthHubEventData } from '@aws-amplify/core/dist/esm/Hub/types';
 import { AuthenticatorService } from '@aws-amplify/ui-angular';
 import { Hub, HubCapsule } from 'aws-amplify/utils';
@@ -19,7 +20,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   constructor(
     public authenticator: AuthenticatorService,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -48,7 +50,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.deleteTokensAndUserAttributesFromStorage();
     this.authenticator.signOut();
 
-    if (this.identityProvider === IdentityProvider.Okta) {
+    if (
+      this.identityProvider === IdentityProvider.Okta ||
+      this.identityProvider === IdentityProvider.Cognito
+    ) {
       this.signOutOAuthUser();
     }
   }
@@ -126,18 +131,24 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   private extractIdentityProviderName(id_token: string) {
     const idTokenPayload = JSON.parse(atob(id_token.split('.')[1]));
-    const providerName: string =
+    let providerName: string =
       idTokenPayload?.['identities']?.[0]?.['providerName'];
 
-    switch (providerName.toLowerCase()) {
-      case IdentityProvider.Okta.toLowerCase():
-        return IdentityProvider.Okta;
-      case IdentityProvider.Google.toLowerCase():
-        return IdentityProvider.Google;
-      case IdentityProvider.Facebook.toLowerCase():
-        return IdentityProvider.Facebook;
-      default:
-        return IdentityProvider.Cognito;
+    if (providerName) {
+      switch (providerName.toLowerCase()) {
+        case IdentityProvider.Okta.toLowerCase():
+          return IdentityProvider.Okta;
+        case IdentityProvider.Google.toLowerCase():
+          return IdentityProvider.Google;
+        case IdentityProvider.Facebook.toLowerCase():
+          return IdentityProvider.Facebook;
+        case IdentityProvider.Cognito.toLowerCase():
+          return IdentityProvider.Cognito;
+        default:
+          return IdentityProvider.Other;
+      }
+    } else {
+      return IdentityProvider.Cognito;
     }
   }
 

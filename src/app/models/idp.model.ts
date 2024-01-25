@@ -1,7 +1,7 @@
 export enum IdentityProvider {
-  Cognito = 'Cognito',
+  Cognito = 'COGNITO',
   Google = 'Google',
   Facebook = 'Facebook',
   Okta = 'Okta',
-  None = 'None',
+  Other = 'Other',
 }

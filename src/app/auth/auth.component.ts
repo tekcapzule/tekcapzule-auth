@@ -1,14 +1,19 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthenticatorService } from '@aws-amplify/ui-angular';
+import { Hub, HubCapsule } from 'aws-amplify/utils';
+import { AuthHubEventData } from '@aws-amplify/core/dist/esm/Hub/types';
 import awsExports from '../../aws-exports';
 import { IdentityProvider } from '../models/idp.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.scss'],
 })
-export class AuthComponent {
+export class AuthComponent implements OnInit {
+  hubListenerCancelToken: any = null;
+
   readonly formFields = {
     signUp: {
       email: {
@@ -39,13 +44,41 @@ export class AuthComponent {
     },
   };
 
-  constructor(public authenticator: AuthenticatorService) {}
+  constructor(
+    public authenticator: AuthenticatorService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.hubListenerCancelToken = Hub.listen('auth', (data) => {
+      this.authEventListener(data);
+    });
+  }
+
+  private authEventListener(data: HubCapsule<'auth', AuthHubEventData>) {
+    switch (data.payload.event) {
+      case 'signedIn':
+        this.handleAwsCognitoSignedInFlow();
+        break;
+    }
+  }
+
+  /**
+   * Only for AWS Cognito
+   */
+  handleAwsCognitoSignedInFlow() {
+    // navigate to home page post signedIn
+    this.router.navigate(['home']);
+  }
 
   redirectToOktaSSO() {
     const oAuthAuthorizeEndpoint = new URL(
       `https://${awsExports.oauth.domain}/oauth2/authorize`
     );
-    oAuthAuthorizeEndpoint.searchParams.append('identity_provider', 'Okta');
+    oAuthAuthorizeEndpoint.searchParams.append(
+      'identity_provider',
+      IdentityProvider.Okta
+    );
     oAuthAuthorizeEndpoint.searchParams.append(
       'redirect_uri',
       awsExports.oauth.redirectSignIn
